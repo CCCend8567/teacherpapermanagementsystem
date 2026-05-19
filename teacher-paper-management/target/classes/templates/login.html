@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - 教师论文管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师个人主页论文下载管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/teachers">教师列表</a>
+                    <a href="#" th:href="@{/register}">注册</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="card">
+                <h2>用户登录</h2>
+                <form method="post" th:action="@{/login}">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit">登录</button>
+                </form>
+                <div class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+                    登录失败，请检查用户名和密码
+                </div>
+                <p>还没有账号？<a href="#" th:href="@{/register}">立即注册</a></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

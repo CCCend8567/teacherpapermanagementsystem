@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心 - 教师论文管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .container-flex { display: flex; }
+        .sidebar { width: 200px; background: #f5f5f5; min-height: 600px; }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li { padding: 20px; cursor: pointer; }
+        .sidebar li.active, .sidebar li:hover { background: #e0e0e0; font-weight: bold; }
+        .content { flex: 1; padding: 40px; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; padding: 0 40px; background: #fff; border-bottom: 1px solid #ddd; height: 60px;}
+        .topbar .nav-links a { margin-left: 30px; text-decoration: none; color: #222; font-size: 18px;}
+        .topbar .nav-links a:hover { text-decoration: underline; }
+        .logo h1 { font-size: 22px; margin: 0; }
+        .user-table th, .user-table td {
+            padding: 12px 24px;
+            min-width: 80px;
+            text-align: center;
+        }
+        .user-table th {
+            background: #f8f8f8;
+        }
+        .user-table td form {
+            margin-right: 10px;
+            display: inline-block;
+        }
+        .user-table td:last-child {
+            white-space: nowrap;
+        }
+        /* 搜索框和按钮放大样式 */
+        .search-bar-input {
+            width: 280px;
+            height: 36px;
+            font-size: 16px;
+            padding: 0 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .search-bar-btn {
+            height: 40px;
+            font-size: 18px;
+            padding: 0 24px;
+            border-radius: 6px;
+            margin-left: 10px;
+        }
+        .manage-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .paper-action-btn {
+            display: inline-block;
+            padding: 6px 18px;
+            margin-left: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff !important;
+            background: #1890ff;
+            transition: background 0.2s;
+        }
+        .paper-action-btn:hover {
+            background: #1677cc;
+        }
+        .paper-delete-btn {
+            background: #ff4d4f;
+        }
+        .paper-delete-btn:hover {
+            background: #d9363e;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师个人主页论文下载管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a th:href="@{/}">首页</a>
+                    <a th:href="@{/teachers}">教师列表</a>
+                    <a th:href="@{/logout}">退出登录</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <div class="container-flex">
+        <nav class="sidebar">
+            <ul>
+                <!-- 教师功能栏 -->
+                <li th:if="${user.role.name() == 'ROLE_TEACHER'}"
+                    th:classappend="${activeTab} == 'info' ? 'active'"
+                    th:onclick="'window.location.href=\'/profile?tab=info\''">
+                    个人主页
+                </li>
+                <li th:if="${user.role.name() == 'ROLE_TEACHER'}"
+                    th:classappend="${activeTab} == 'edit' ? 'active'"
+                    th:onclick="'window.location.href=\'/profile?tab=edit\''">
+                    个人信息修改
+                </li>
+                <li th:if="${user.role.name() == 'ROLE_TEACHER'}"
+                    th:classappend="${activeTab} == 'upload' ? 'active'"
+                    th:onclick="'window.location.href=\'/profile?tab=upload\''">
+                    上传论文
+                </li>
+                <li th:if="${user.role.name() == 'ROLE_ADMIN'}"
+                    th:classappend="${activeTab} == 'user' ? 'active'"
+                    th:onclick="'window.location.href=\'/profile?tab=user\''">
+                    用户管理
+                </li>
+                <li th:if="${user.role.name() == 'ROLE_ADMIN'}"
+                    th:classappend="${activeTab} == 'paper' ? 'active'"
+                    th:onclick="'window.location.href=\'/profile?tab=paper\''">
+                    论文管理
+                </li>
+            </ul>
+        </nav>
+        <main class="content">
+            <!-- 右侧内容区：暂时只显示占位内容 -->
+            <div th:if="${activeTab} == 'info'">
+                <div th:replace="~{teacher/detail :: teacherDetailFragment}"></div>
+            </div>
+            <div th:if="${activeTab} == 'edit'">
+                <div class="edit-section">
+                    <h3>修改个人信息</h3>
+                    <form method="post" th:action="@{/profile/edit}" id="editForm">
+                        <input type="hidden" name="teacherId" th:value="${teacher != null ? teacher.id : ''}">
+                        <div class="form-group">
+                            <label for="password">新密码</label>
+                            <input type="password" id="password" name="password" placeholder="如不修改请留空">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" name="email" th:value="${user.email}">
+                        </div>
+                        <div class="form-group">
+                            <label for="school">学校</label>
+                            <input type="text" id="school" name="school" th:value="${teacher != null ? teacher.school : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="department">所属院系</label>
+                            <input type="text" id="department" name="department" th:value="${teacher != null ? teacher.department : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="intro">个人简介</label>
+                            <textarea id="intro" name="intro" rows="3" th:text="${teacher != null ? teacher.intro : ''}"></textarea>
+                        </div>
+                        <button type="submit">保存修改</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${activeTab} == 'upload'">
+                <div class="upload-section">
+                    <h3>上传新论文</h3>
+                    <form method="post" enctype="multipart/form-data" th:action="@{/teachers/upload-paper}" id="uploadForm">
+                        <input type="hidden" name="teacherId" th:value="${teacher != null ? teacher.id : ''}">
+                        <div class="form-group">
+                            <label for="title">论文标题</label>
+                            <input type="text" id="title" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">论文描述</label>
+                            <textarea id="description" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="publishDate">发表日期</label>
+                            <input type="month" id="publishDate" name="publishDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file">选择文件</label>
+                            <input type="file" id="file" name="file" accept=".pdf" required>
+                            <div class="file-name"></div>
+                            <small class="form-text text-muted">支持PDF格式，文件大小不超过10MB</small>
+                        </div>
+                        <button type="submit">上传</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${activeTab} == 'user'">
+                <h3 class="manage-title">教师用户管理</h3>
+                <div style="margin:10px 0 10px 0;color:#888;font-size:14px;">重置后密码默认为123456</div>
+                <form method="get" action="/profile" style="margin-bottom: 20px;">
+                    <input type="hidden" name="tab" value="user">
+                    <input type="text" name="keyword" placeholder="搜索教师用户名/邮箱..." th:value="${keyword}" class="search-bar-input">
+                    <button type="submit" class="search-bar-btn">搜索</button>
+                </form>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>姓名</th>
+                            <th>学校</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${teacherUsers}">
+                            <td th:text="${u.username}">用户名</td>
+                            <td th:text="${u.email}">邮箱</td>
+                            <td th:text="${u.teacher != null ? u.teacher.name : ''}">姓名</td>
+                            <td th:text="${u.teacher != null ? u.teacher.school : ''}">学校</td>
+                            <td>
+                                <form th:action="@{'/admin/users/' + ${u.id} + '/reset-password'}" method="post" style="display:inline;" class="reset-password-form">
+                                    <button type="submit">重置密码</button>
+                                </form>
+                                <form th:action="@{'/admin/users/' + ${u.id} + '/delete'}" method="post" style="display:inline;" class="delete-user-form">
+                                    <button type="submit">删除用户</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${teacherUsers == null or teacherUsers.isEmpty()}">
+                            <td colspan="6" style="text-align:center;">暂无教师用户</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${activeTab} == 'review'">[论文管理内容区]</div>
+            <div th:if="${activeTab} == 'paper'">
+                <h3 class="manage-title">全部论文管理</h3>
+                <form method="get" action="/profile" style="margin-bottom: 20px;">
+                    <input type="hidden" name="tab" value="paper">
+                    <input type="text" name="keyword" placeholder="搜索论文标题/作者/用户名..." th:value="${paperKeyword}" class="search-bar-input">
+                    <button type="submit" class="search-bar-btn">搜索</button>
+                </form>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>标题</th>
+                            <th>作者</th>
+                            <th>用户名</th>
+                            <th>发表日期</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${allPapers}">
+                            <td th:text="${p.title}">标题</td>
+                            <td th:text="${p.teacher != null ? p.teacher.name : '未知'}">作者</td>
+                            <td th:text="${p.teacher != null && p.teacher.user != null ? p.teacher.user.username : '未知'}">用户名</td>
+                            <td th:text="${p.publishDate != null ? #temporals.format(p.publishDate, 'yyyy-MM') : ''}">发表日期</td>
+                            <td>
+                                <a th:href="@{'/papers/' + ${p.id}}" target="_blank" class="paper-action-btn">查看</a>
+                                <form th:action="@{'/papers/' + ${p.id} + '/delete'}" method="post" style="display:inline;" onsubmit="return confirm('确定要删除该论文吗？此操作不可恢复！');">
+                                    <button type="submit" class="paper-action-btn paper-delete-btn">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${allPapers == null or allPapers.isEmpty()}" >
+                            <td colspan="5" style="text-align:center;">暂无论文</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${activeTab} == null">[请选择左侧功能]</div>
+        </main>
+    </div>
+<script>
+document.querySelectorAll('.reset-password-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        if (!confirm('请确定是否重置该用户密码？重置后密码为123456')) {
+            e.preventDefault();
+        }
+    });
+});
+document.querySelectorAll('.delete-user-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        if (!confirm('请确定是否删除该用户？此操作不可恢复，且将同时删除其名下论文！')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+</body>
+</html> 

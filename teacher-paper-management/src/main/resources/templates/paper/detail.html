@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${paper.title}">论文详情</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header>
+    <div class="container">
+        <nav>
+            <div class="logo">
+                <h1>教师个人主页论文下载管理系统</h1>
+            </div>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="/teachers">教师列表</a>
+                <a th:if="${#httpServletRequest.remoteUser == null}" th:href="@{/login}">登录</a>
+                <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/profile}">个人中心</a>
+                <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/logout}">退出登录</a>
+            </div>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="container">
+        <h2 th:text="${paper.title}">论文标题</h2>
+        <p><strong>作者：</strong><span th:text="${paper.teacher != null ? paper.teacher.name : '未知'}"></span></p>
+        <p><strong>发表日期：</strong><span th:text="${paper.publishDate != null ? T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM').format(paper.publishDate) : '无'}"></span></p>
+        <p><strong>论文描述：</strong></p>
+        <div th:text="${paper.description}"></div>
+        <p><strong>下载链接：</strong>
+            <a th:href="@{/papers/{id}/download(id=${paper.id})}">下载</a>
+        </p>
+    </div>
+</main>
+</body>
+</html> 

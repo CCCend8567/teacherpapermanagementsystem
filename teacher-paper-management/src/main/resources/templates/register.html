@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册 - 教师个人主页论文下载管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师个人主页论文下载管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/teachers">教师列表</a>
+                    <a href="#" th:href="@{/login}">登录</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="card">
+                <h2>教师注册</h2>
+                <form method="post" th:action="@{/register}" id="registerForm">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <button type="submit">注册</button>
+                </form>
+                <div class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+                    注册失败，请检查输入信息
+                </div>
+                <div class="success-message" th:if="${successMessage}" th:text="${successMessage}">
+                    注册成功，请登录
+                </div>
+                <p>已有账号？<a href="#" th:href="@{/login}">立即登录</a></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

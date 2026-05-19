@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>出错啦！</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师论文管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/teachers">教师列表</a>
+                    <a th:if="${#httpServletRequest.remoteUser == null}" th:href="@{/login}">登录</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/profile}">个人中心</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="error-page">
+                <h1>发生了一些错误，请稍后再试。</h1>
+                <p style="color:red;font-weight:bold;">错误信息：<span th:text="${errorMessage}">无详细信息</span></p>
+                <div class="error-actions">
+                    <a href="/" class="btn">返回首页</a>
+                    <a href="javascript:history.back()" class="btn">返回上一页</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

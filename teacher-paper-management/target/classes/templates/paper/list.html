@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>论文列表 - 教师论文管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师个人主页论文下载管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/teachers">教师列表</a>
+                    <a th:if="${#httpServletRequest.remoteUser == null}" th:href="@{/login}">登录</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/profile}">个人中心</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/logout}">退出登录</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>论文列表</h2>
+            <div class="search-bar">
+                <form method="get" action="/papers">
+                    <input type="text" placeholder="搜索论文..." name="keyword">
+                    <select name="teacherId">
+                        <option value="">所有教师</option>
+                        <option th:each="teacher : ${teachers}" 
+                                th:value="${teacher.id}" 
+                                th:text="${teacher.name}">教师名称</option>
+                    </select>
+                    <button type="submit">搜索</button>
+                </form>
+            </div>
+            <div class="paper-list" th:if="${papers != null and !papers.isEmpty()}">
+                <ul>
+                    <li class="paper-item" th:each="paper : ${papers}">
+                        <div class="paper-title" th:text="${paper.title}">论文标题</div>
+                        <div class="paper-meta">
+                            <span>作者: <span th:text="${paper.teacher.name}">教师姓名</span></span>
+                            <span> | </span>
+                            <span th:text="${#dates.format(paper.publishDate, 'yyyy-MM-dd')}">发布日期</span>
+                            <span> | </span>
+                            <span th:text="${paper.fileType}">文件类型</span>
+                        </div>
+                        <a href="#" class="download-link" th:href="@{/api/papers/{id}/download(id=${paper.id})}">下载</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="no-data" th:if="${papers == null or papers.isEmpty()}">
+                <p>暂无论文信息</p>
+            </div>
+            <div class="pagination">
+                <!-- 分页控件 -->
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

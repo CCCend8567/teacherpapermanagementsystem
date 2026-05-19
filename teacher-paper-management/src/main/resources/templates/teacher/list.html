@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>教师列表 - 教师论文管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师个人主页论文下载管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/teachers">教师列表</a>
+                    <a th:if="${#httpServletRequest.remoteUser == null}" th:href="@{/login}">登录</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/profile}">个人中心</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/logout}">退出登录</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>教师列表</h2>
+            <div class="search-bar">
+                <form method="get" action="/teachers">
+                    <input type="text" placeholder="搜索教师/院校" name="keyword">
+                    <button type="submit">搜索</button>
+                </form>
+            </div>
+            <div class="teacher-list" th:if="${teachers != null and !teachers.isEmpty()}">
+                <div class="teacher-card" th:each="teacher : ${teachers}">
+                    <h3 th:text="${teacher.name}">教师姓名</h3>
+                    <p><span th:text="${teacher.school}">学校</span> | <span th:text="${teacher.department}">所属院系</span></p>
+                    <p th:text="${teacher.intro}">教师简介</p>
+                    <a href="#" th:href="@{/teachers/{id}(id=${teacher.id})}">查看论文</a>
+                </div>
+            </div>
+            <div class="no-data" th:if="${teachers == null or teachers.isEmpty()}">
+                <p>暂无教师信息</p>
+            </div>
+            <div class="pagination">
+                <!-- 分页控件 -->
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

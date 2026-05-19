@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>[[${teacher.name}]] - 教师论文管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师个人主页论文下载管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/teachers">教师列表</a>
+                    <a th:if="${#httpServletRequest.remoteUser == null}" th:href="@{/login}">登录</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/profile}">个人中心</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/logout}">退出登录</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div th:fragment="teacherDetailFragment">
+                <div class="teacher-detail">
+                    <h2 th:text="${teacher.name}">教师姓名</h2>
+                    <p><strong>所属院系:</strong> <span th:text="${teacher.department}">院系</span></p>
+                    <p><strong>学校:</strong> <span th:text="${teacher.school}">学校</span></p>
+                    <p><strong>个人简介:</strong> <span th:text="${teacher.intro}">简介</span></p>
+                    
+                    <div class="success-message" th:if="${param.uploadSuccess}">
+                        论文上传成功
+                    </div>
+                    
+                    <h3>发表论文</h3>
+                    <div class="paper-list" th:if="${teacher.papers != null and !teacher.papers.isEmpty()}">
+                        <ul>
+                            <li class="paper-item" th:each="paper : ${teacher.papers}">
+                                <a class="paper-title" th:text="${paper.title}" th:href="@{/papers/{id}(id=${paper.id})}">论文标题</a>
+                                <span th:text="${paper.publishDate != null ? T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM').format(paper.publishDate) : '无'}">发布日期</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="no-data" th:if="${teacher.papers == null or teacher.papers.isEmpty()}">
+                        <p>暂无论文信息</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>上传论文 - 教师个人主页论文下载管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>教师个人主页论文下载管理系统</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/teachers">教师列表</a>
+                    <a th:if="${#httpServletRequest.remoteUser == null}" th:href="@{/login}">登录</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/profile}">个人中心</a>
+                    <a th:if="${#httpServletRequest.remoteUser != null}" th:href="@{/logout}">退出登录</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="card">
+                <h2>上传论文</h2>
+                <div class="upload-info">
+                    <p><strong>上传要求：</strong></p>
+                    <ul>
+                        <li>文件格式：仅支持PDF格式</li>
+                        <li>文件大小：不超过10MB</li>
+                    </ul>
+                </div>
+                <form method="post" enctype="multipart/form-data" 
+                      th:action="@{/teachers/upload-paper}" id="uploadForm">
+                    <div class="form-group">
+                        <label for="teacherId">选择教师</label>
+                        <select id="teacherId" name="teacherId" required>
+                            <option value="">请选择教师</option>
+                            <option th:each="teacher : ${teachers}" 
+                                    th:value="${teacher.id}" 
+                                    th:text="${teacher.name}">教师名称</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">论文标题</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">论文描述</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="file">选择文件</label>
+                        <input type="file" id="file" name="file" accept=".pdf" required>
+                        <div class="file-name"></div>
+                        <small class="form-text text-muted">支持PDF格式，文件大小不超过10MB</small>
+                    </div>
+                    <button type="submit">上传</button>
+                </form>
+                <div class="error-message" th:if="${param.error}" th:text="${session.errorMessage}">
+                    上传失败，请检查输入信息
+                </div>
+                <div class="success-message" th:if="${param.success}" th:text="${session.success}">
+                    上传成功
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
