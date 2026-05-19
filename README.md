@@ -1,1 +1,3 @@
-# ccprojects
+# teacherpapermanagementsystem
+## Eclipse
+## Java SpringBoot MySQL
