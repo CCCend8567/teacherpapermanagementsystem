@@ -1,3 +1,3 @@
 # teacherpapermanagementsystem
-## Eclipse
-## Java SpringBoot MySQL
+1.Eclipse
+2.Java SpringBoot MySQL
